@@ -9,11 +9,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'MP Flutter Chart Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LineChartPage(title: 'Flutter Demo Home Page'),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('MP Flutter Chart Demo'),
+        ),
+        body: LineChartPage(),
+      ),
     );
   }
 }
