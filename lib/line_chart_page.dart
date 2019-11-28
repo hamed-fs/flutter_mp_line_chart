@@ -40,7 +40,7 @@ class LineChartBasicState extends State<LineChartPage> {
       await Future.delayed(Duration(seconds: 1));
       var image = await ImageLoader.loadImage('assets/img/flag.png');
 
-      yield Entry(x: (values.length).toDouble(), y: generateNextRandomValue((values[values.length - 1].y).toDouble(), 5), icon: values.length % 5 == 0 ? image : null);
+      yield Entry(x: (values.length).toDouble(), y: generateNextRandomValue((values[values.length - 1].y).toDouble(), 5), icon: values.length % 10 == 0 ? image : null);
     }
   }
 
@@ -62,8 +62,8 @@ class LineChartBasicState extends State<LineChartPage> {
         _initialLimitLines();
         _initLineData();
 
-        _controller.setVisibleXRangeMaximum(MAX_VISIBLE_AREA);
-        _controller.moveViewToX(values.length - MAX_VISIBLE_AREA + 1);
+        // _controller.setVisibleXRangeMaximum(MAX_VISIBLE_AREA);
+        // _controller.moveViewToX(values.length - MAX_VISIBLE_AREA + 1);
       });
     });
 
@@ -141,7 +141,7 @@ class LineChartBasicState extends State<LineChartPage> {
   }
 
   void _initialLimitLines() {
-    limitLineMax = LimitLine(values.map<double>((value) => value.y).reduce(max) + 3, 'Upper Limit')
+    limitLineMax = LimitLine(values.map<double>((value) => value.y).reduce(max) + 5, 'Upper Limit')
       ..setLineWidth(2)
       ..enableDashedLine(15, 5, 0)
       ..lineColor = Colors.green
@@ -149,7 +149,7 @@ class LineChartBasicState extends State<LineChartPage> {
       ..textSize = (10)
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
 
-    limitLineMin = LimitLine(values.map<double>((value) => value.y).reduce(min) - 3, 'Lower Limit')
+    limitLineMin = LimitLine(values.map<double>((value) => value.y).reduce(min) - 5, 'Lower Limit')
       ..setLineWidth(2)
       ..enableDashedLine(15, 5, 0)
       ..lineColor = Colors.red
@@ -157,7 +157,7 @@ class LineChartBasicState extends State<LineChartPage> {
       ..textSize = (10)
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
 
-    barrier = LimitLine(values.map<double>((value) => value.y).last, 'Barrier ${values.map<double>((e) => e.y).last}')
+    barrier = LimitLine(values.map<double>((value) => value.y).last, 'Barrier ${values.map<double>((value) => value.y).last}')
       ..setLineWidth(2)
       ..enableDashedLine(2, 1, 0)
       ..lineColor = Colors.blueGrey
@@ -177,7 +177,7 @@ class LineChartBasicState extends State<LineChartPage> {
       ..setLineWidth(2)
       ..setCircleRadius(2.5)
       ..setDrawCircleHole(false)
-      ..setDrawCircles(false)
+      ..setDrawCircles(true)
       ..setFormLineWidth(1)
       ..setFormSize(15)
       ..setDrawValues(false)
@@ -185,7 +185,7 @@ class LineChartBasicState extends State<LineChartPage> {
       ..enableDashedHighlightLine(1, 1, 0)
       ..setDrawFilled(false)
       ..setFillColor(Colors.white)
-      ..setMode(Mode.CUBIC_BEZIER)
+      ..setMode(Mode.LINEAR)
       ..setDrawHorizontalHighlightIndicator(true)
       ..setDrawVerticalHighlightIndicator(true)
       ..setCircleHoleColor(Colors.white)
