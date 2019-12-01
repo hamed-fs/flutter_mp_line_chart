@@ -22,10 +22,14 @@ class LineChartPage extends StatefulWidget {
 }
 
 class LineChartBasicState extends State<LineChartPage> {
-  static const double MAX_VISIBLE_AREA = 80;
+  static const double MAX_Y_VISIBLE_AREA = 10;
+  static const double MAX_X_VISIBLE_AREA = 20;
 
   final List<Entry> values = List<Entry>();
   LineChartController _controller;
+  LimitLine limitLineMax;
+  LimitLine limitLineMin;
+  LimitLine barrier;
 
   void _getInitialData() {
     int _count = 3;
@@ -90,10 +94,6 @@ class LineChartBasicState extends State<LineChartPage> {
     );
   }
 
-  LimitLine limitLineMax;
-  LimitLine limitLineMin;
-  LimitLine barrier;
-
   void _initController() {
     Description desc = Description()..enabled = false;
 
@@ -127,7 +127,9 @@ class LineChartBasicState extends State<LineChartPage> {
           // ..drawGridLines = false
           // ..setLabelCount1(6)
           ..centerAxisLabels = true
-          ..position = XAxisPosition.BOTTOM;
+          ..position = XAxisPosition.BOTTOM
+          ..setAxisMaxValue(values.map<double>((value) => value.x).reduce(max) < MAX_X_VISIBLE_AREA ? MAX_X_VISIBLE_AREA : values.map<double>((value) => value.x).reduce(max))
+          ..setAxisMinimum(values.map<double>((value) => value.x).reduce(max) - MAX_X_VISIBLE_AREA < 0 ? 0 : values.map<double>((value) => value.x).reduce(max) - MAX_X_VISIBLE_AREA);
       },
       drawGridBackground: false,
       backgroundColor: ColorUtils.WHITE,
@@ -160,7 +162,7 @@ class LineChartBasicState extends State<LineChartPage> {
     barrier = LimitLine(values.map<double>((value) => value.y).last, 'Barrier ${values.map<double>((value) => value.y).last}')
       ..setLineWidth(2)
       ..enableDashedLine(2, 1, 0)
-      ..lineColor = Colors.blueGrey
+      ..lineColor = Colors.orangeAccent
       ..labelPosition = (LimitLabelPosition.RIGHT_TOP)
       ..textSize = (10)
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
@@ -172,7 +174,7 @@ class LineChartBasicState extends State<LineChartPage> {
     dataset = LineDataSet(values, 'Data Set')
       ..setDrawIcons(true)
       ..setColor1(Colors.black.withOpacity(0.6))
-      ..setCircleColor(Colors.black.withOpacity(0.6))
+      ..setCircleColor(Colors.black)
       ..setHighLightColor(ColorUtils.BLACK)
       ..setLineWidth(2)
       ..setCircleRadius(2.5)
