@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:mp_chart/mp/chart/line_chart.dart';
@@ -16,6 +17,8 @@ import 'package:mp_chart/mp/core/image_loader.dart';
 import 'package:mp_chart/mp/core/limit_line.dart';
 import 'package:mp_chart/mp/core/utils/color_utils.dart';
 
+import 'package:flutter_mp_line_chart/custom_line_chart_marker.dart';
+
 class LineChartPage extends StatefulWidget {
   @override
   LineChartBasicState createState() => LineChartBasicState();
@@ -23,7 +26,7 @@ class LineChartPage extends StatefulWidget {
 
 class LineChartBasicState extends State<LineChartPage> {
   static const double MAX_Y_VISIBLE_AREA = 10;
-  static const double MAX_X_VISIBLE_AREA = 20;
+  static const double MAX_X_VISIBLE_AREA = 40;
 
   final List<Entry> values = List<Entry>();
   LineChartController _controller;
@@ -128,8 +131,8 @@ class LineChartBasicState extends State<LineChartPage> {
           // ..setLabelCount1(6)
           ..centerAxisLabels = true
           ..position = XAxisPosition.BOTTOM
-          ..setAxisMaxValue(values.map<double>((value) => value.x).reduce(max) < MAX_X_VISIBLE_AREA ? MAX_X_VISIBLE_AREA : values.map<double>((value) => value.x).reduce(max))
-          ..setAxisMinimum(values.map<double>((value) => value.x).reduce(max) - MAX_X_VISIBLE_AREA < 0 ? 0 : values.map<double>((value) => value.x).reduce(max) - MAX_X_VISIBLE_AREA);
+          ..setAxisMaxValue(values.length < MAX_X_VISIBLE_AREA ? MAX_X_VISIBLE_AREA : values.length.toDouble())
+          ..setAxisMinimum(values.length - MAX_X_VISIBLE_AREA < 0 ? 0 : values.length - MAX_X_VISIBLE_AREA);
       },
       drawGridBackground: false,
       backgroundColor: ColorUtils.WHITE,
@@ -139,32 +142,40 @@ class LineChartBasicState extends State<LineChartPage> {
       scaleYEnabled: false,
       pinchZoomEnabled: true,
       description: desc,
+      marker: CustomLineChartMarker(
+        backColor: Colors.blueGrey.withOpacity(0.75),
+        textColor: Colors.white,
+        dy: -15.0,
+      ),
     );
   }
 
   void _initialLimitLines() {
     limitLineMax = LimitLine(values.map<double>((value) => value.y).reduce(max) + 5, 'Upper Limit')
       ..setLineWidth(2)
+      ..textColor = Colors.green
       ..enableDashedLine(15, 5, 0)
       ..lineColor = Colors.green
       ..labelPosition = (LimitLabelPosition.RIGHT_TOP)
-      ..textSize = (10)
+      ..textSize = 10
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
 
     limitLineMin = LimitLine(values.map<double>((value) => value.y).reduce(min) - 5, 'Lower Limit')
       ..setLineWidth(2)
       ..enableDashedLine(15, 5, 0)
+      ..textColor = Colors.red
       ..lineColor = Colors.red
       ..labelPosition = (LimitLabelPosition.RIGHT_BOTTOM)
-      ..textSize = (10)
+      ..textSize = 10
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
 
     barrier = LimitLine(values.map<double>((value) => value.y).last, 'Barrier ${values.map<double>((value) => value.y).last}')
       ..setLineWidth(2)
       ..enableDashedLine(2, 1, 0)
+      ..textColor = Colors.orangeAccent
       ..lineColor = Colors.orangeAccent
       ..labelPosition = (LimitLabelPosition.RIGHT_TOP)
-      ..textSize = (10)
+      ..textSize = 12
       ..typeface = TypeFace(fontFamily: "OpenSans", fontWeight: FontWeight.w800);
   }
 
@@ -175,21 +186,23 @@ class LineChartBasicState extends State<LineChartPage> {
       ..setDrawIcons(true)
       ..setColor1(Colors.black.withOpacity(0.6))
       ..setCircleColor(Colors.black)
-      ..setHighLightColor(ColorUtils.BLACK)
-      ..setLineWidth(2)
-      ..setCircleRadius(2.5)
+      ..setLineWidth(1.5)
+      ..enableDashedLine(1, 1, 0)
+      ..setCircleRadius(2)
       ..setDrawCircleHole(false)
       ..setDrawCircles(true)
       ..setFormLineWidth(1)
       ..setFormSize(15)
       ..setDrawValues(false)
       ..setValueTextSize(9)
-      ..enableDashedHighlightLine(1, 1, 0)
+      // ..enableDashedHighlightLine(1, 1, 0)
       ..setDrawFilled(false)
       ..setFillColor(Colors.white)
       ..setMode(Mode.LINEAR)
+      ..setHighLightColor(Colors.blueGrey)
       ..setDrawHorizontalHighlightIndicator(true)
       ..setDrawVerticalHighlightIndicator(true)
+      ..setHighlightLineWidth(1.0)
       ..setCircleHoleColor(Colors.white)
       ..setCircleHoleRadius(1)
       ..setDrawHighlightIndicators(true);
@@ -198,7 +211,9 @@ class LineChartBasicState extends State<LineChartPage> {
   }
 
   Widget _initLineChart() {
-    return LineChart(_controller..animator.reset());
+    return LineChart(_controller
+      ..animator.reset()
+      ..highlightPerDragEnabled = true);
   }
 
   @override
